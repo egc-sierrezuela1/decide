@@ -24,10 +24,12 @@
             </b-navbar-nav>
           </nav>
 
+    
         <b-alert :variant="alertLvl" dismissible v-model="alertShow">
             [[ alertMsg ]]
         </b-alert>
-
+        <div class="voting-externa">
+           
         <div class="voting">
             <h1>[[ voting.id ]] - [[ voting.name ]]</h1>
 
@@ -72,8 +74,12 @@
                 <b-button type="button" variant="primary" v-on:click="decideSend">
                     {% trans "Vote" %}
                 </b-button>
+            </div> 
             </div>
         </div>
+    </div>
+    <div class="voting-images">
+        <img src="../../static/booth/images/votaciones.png"
     </div>
 {% endblock %}
 
@@ -218,5 +224,6 @@
             },
         })
     </script>
+
 </body>
 {% endblock %}
