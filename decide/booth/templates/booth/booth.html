@@ -12,14 +12,17 @@
 {% block content %}
     <div id="app-booth">
         <!-- Navbar -->
-        <b-navbar type="dark" variant="secondary">
-            <b-navbar-brand tag="h1">Decide</b-navbar-brand>
-                <b-navbar-nav class="ml-auto" v-if="!signup">
-                    <b-nav-item href="#" v-on:click="decideLogout">
-                        {% trans "logout" %}
-                    </b-nav-item>
-                </b-navbar-nav>
-        </b-navbar>
+        <nav class="navbar navbar-light bg-info">
+            <a class="navbar-brand" href="#">
+              <img src="../../static/booth/images/decideD.png" width="40" height="30" class="d-inline-block align-top" alt="">
+              Decide
+            </a>
+            <b-navbar-nav class="me-auto" v-if="!signup">
+                <b-nav-item href="#" v-on:click="decideLogout">
+                    {% trans "logout" %}
+                </b-nav-item>
+            </b-navbar-nav>
+          </nav>
 
         <b-alert :variant="alertLvl" dismissible v-model="alertShow">
             [[ alertMsg ]]
@@ -30,22 +33,28 @@
 
             <!-- Register -->
             <b-form @submit="onSubmitLogin" v-if="signup">
-                <b-form-group label="{% trans "Username" %}" label-for="username">
+            <div class="col-sm-4">
+                <b-form-group label="{% trans "Username" %}" label-size="lg" label="Large" label-for="username">
                     <b-form-input
                         id="username"
                         type="text"
+                        size="lg"
                         v-model="form.username"
                         autocomplete="username"
                         required />
                 </b-form-group>
-                <b-form-group label="{% trans "Password" %}" label-for="password">
+            </div>
+            <div class="col-sm-4">
+                <b-form-group label="{% trans "Password" %}" label-size="lg" label="Large" label-for="password">
                     <b-form-input
                         id="password"
                         type="password"
+                        size="lg"
                         autocomplete="current-password"
                         v-model="form.password"
                         required />
                 </b-form-group>
+            </div>
                 <b-button type="submit" variant="primary">{% trans "Login" %}</b-button>
             </b-form>
 
