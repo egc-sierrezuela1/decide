@@ -19,13 +19,28 @@
 
 <form id="formulario" method="POST" action="">{% csrf_token %}
 
-{{ formulario.as_p }}
+{{ formulario2.as_p }}
 
-<p><input type="submit" value="Confirmar"/></p>
+
+
+<label>Título:</label>
+{{  formulario.titulo }}
+<br>
+<label>Opciones:</label>
+<input id="valorOpciones" value={{formulario.campos_preguntas}}
+
+<button type="button" onClick="GFG_Fun()">
+    Añadir opciones
+</button>
+<p id="GFG_DOWN"></p>
+
+<!-- <p><input type="submit" value="Confirmar"/></p> -->
+
 </form>
 
 
 {% endblock %}
+
 
 {% block extrabody %}
     <!-- needed to generate big random -->
@@ -43,6 +58,53 @@
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
     <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+
+
+
+    <script>
+        var down = document.getElementById("GFG_DOWN");
+        creado = false;
+        function GFG_Fun() {
+
+            if(creado){
+                down.reset();
+                creado = false;
+            }else{
+
+            creado = true;
+            var numOpciones = document.getElementById("valorOpciones").value;
+
+            // Create a form synamically
+            var form = document.createElement("form");
+            form.setAttribute("method", "post");
+
+            var i = 1;
+            if(numOpciones>0){
+                while(i<=numOpciones){
+                // Create an input element for option
+                var ejem = document.createElement("input");
+                ejem.setAttribute("id", "opcion");
+                ejem.setAttribute("type", "text");
+                ejem.setAttribute("name", "opcion"+i);
+                ejem.setAttribute("placeholder", "Opcion"+i);
+                form.append(ejem);
+
+                i=i+1;
+            }
+            var s = document.createElement("input");
+            s.setAttribute("type", "submit");
+            s.setAttribute("value", "Confirmar");
+            // Append the button to the form
+            form.append(s); 
+            }
+
+            document.getElementsByTagName("body")[0]
+        .appendChild(form);
+        }   
+        }
+
+    </script>
+
 
     <script>
         var voting = {{voting|safe}};

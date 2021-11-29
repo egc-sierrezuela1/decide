@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+    <link type="text/css" rel="stylesheet" href="{% static "booth/style.css" %}" />
+{% endblock %}
+
+{% block content %}
+<div>
+    <p>Muchas gracias por participar en la votación, su voto ha sido guardado correctamente.</p>
+</div>
+<div>
+    <h2>Formulario sugerencia de voto</h2>
+</div>
+
+<form id="formulario" method="POST" action="">{% csrf_token %}
+
+{{ formulario.as_p }}
+
+<p><input type="submit" value="Confirmar"/></p>
+
+</form>
+
+
+{% endblock %}

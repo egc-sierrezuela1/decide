@@ -8,7 +8,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from base import mods
-from booth.forms import SugerenciaVotoForm, SugerenciaVotoEjemplo
+from booth.forms import SugerenciaVotoForm, PreguntaForm, SugerenciaForm
 from django.shortcuts import render
 from django.template import RequestContext
 
@@ -50,17 +50,32 @@ class SugerenciaView(FormView):
         form.send_email()
         return super().form_valid(form) 
 
-    def sugerencia_voto(self, request):
+    def sugerencia_voto(request, voting_id):
         if request=='POST':
             formulario = SugerenciaVotoForm(request.POST)
+            formulario2 = PreguntaForm(request.POST)
+            if formulario.is_valid() & formulario2.is_valid():
+                nueva_sugerencia = formulario.save()
+                nueva_pregunta = formulario2.save()
+                return HttpResponseRedirect("/")
+        else:
+            formulario = SugerenciaVotoForm()
+            formulario2 = PreguntaForm()
+        return render(request, 'booth/sugerencia.html', {'formulario': formulario, 'formulario2':formulario2, 'voting_id': voting_id})
+
+
+class SugerenciaVista(FormView):
+    template_name = 'booth/sugerenciaform.html'
+    form_class = SugerenciaForm
+    success_url = '/'
+
+    def sugerencia_de_voto(request, voting_id):
+        if request=='POST':
+            formulario = SugerenciaForm(request.POST)
             if formulario.is_valid():
                 nueva_sugerencia = formulario.save()
                 return HttpResponseRedirect("/")
         else:
-            formulario = SugerenciaVotoForm()
-        return render(request, 'booth/sugerencia.html', {'formulario': formulario})
- 
-        #msg = 'booth/sugerencia.html'
-        #st = status.HTTP_200_OK
-        #return Response(msg, status=st)
+            formulario = SugerenciaForm()
+        return render(request, 'booth/sugerenciaform.html', {'formulario': formulario, 'voting_id': voting_id})
 
