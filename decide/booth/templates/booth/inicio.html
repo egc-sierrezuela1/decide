@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+    <link type="text/css" rel="stylesheet" href="{% static "booth/style.css" %}" />
+{% endblock %}
+
+{% block content %}
+
+<div> 
+    <h2>Formulario para sugerencias</h2>
+    <a href="sugerenciaformulario/">Formulario de sugerencia</a>
+</div>
+</br>
+<div>
+    <h2>Puede votar en estas votaciones:</h2>
+    <p>Bienvenido, {{user}}</p>
+    <p>Puede votar en {{num_censos}} censos:</p>
+
+    <p>El id del censo al que puede votar es:</p>
+    {% for censo in censos %}
+        <p>ID del voto: {{censo.voting_id}} <a href="{{censo.voting_id}}">Acceder a la cabina del voto</a></p>
+    {% endfor %} 
+
+</div>
+
+
+{% endblock %}

@@ -201,8 +201,8 @@
                     }
                     this.postData("{% url "gateway" "store" "/" %}", data)
                         .then(data => {
-                            //this.showAlert("success", '{% trans "Conglatulations. Your vote has been sent" %}');
-                            window.location.href = "sugerenciaformulario"
+                            this.showAlert("success", '{% trans "Conglatulations. Your vote has been sent" %}');
+                            //window.location.href = "sugerenciaformulario"
                         })
                         .catch(error => {
                             this.showAlert("danger", '{% trans "Error: " %}' + error);
