@@ -10,6 +10,20 @@
 {% endblock %}
 
 {% block content %}
+<div id="app-booth">
+<nav class="navbar navbar-light bg-info">
+    <a class="navbar-brand" href="#">
+      <img src="../../static/booth/images/decideD.png" width="40" height="30" class="d-inline-block align-top" alt="">
+      Decide
+    </a>
+    {% if usuario_valido == 1 %}
+    <b-navbar-nav class="me-auto" v-if="!signup">
+        <b-nav-item>
+            <a href="{% url "logout" %}">Logout</a>
+        </b-nav-item>
+    </b-navbar-nav>
+    {% endif %}
+</nav>
 
 <div> 
     <h2>Formulario para sugerencias</h2>
@@ -28,5 +42,5 @@
 
 </div>
 
-
+</div>
 {% endblock %}
