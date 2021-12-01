@@ -26,7 +26,7 @@ class LoginView(TemplateView):
     template_name = 'booth/login.html'
 
 class LogoutView(TemplateView):
-    template_name = 'booth/inicio.html'
+    template_name = 'booth/login.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -84,11 +84,9 @@ def loginformpost(request):
 
 
 def get_pagina_inicio(request, voter_id):
-
-    print("HA ENTRADO AQUI")
     template = 'booth/inicio.html'
     user_actual = User.objects.all().filter(id=voter_id)[0]
-    print(request.user)
+    request.user = user_actual#para guardar en el request el usuario que se ha autenticado :)
     usuario_valido = User.objects.all().filter(id=user_actual.id).count()
     num_censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id).count()
     censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id)
@@ -143,7 +141,7 @@ class SugerenciaVista(FormView):
     #success_url = '/'
 
     def sugerencia_de_voto(request):
-
+        print(request.user)
         if request.method=='POST':
             formulario = SugerenciaForm(request.POST)
             if formulario.is_valid():
@@ -157,9 +155,9 @@ class SugerenciaVista(FormView):
 
 
 def send_suggesting_form(request):
-
+    print(request.user)
     if request.method == 'POST':
-        user_id = request.user.pk
+        user_id = request.user.id
         title = request.POST['suggesting-title']
         str_s_date = request.POST['suggesting-date']
         content = request.POST['suggesting-content']
@@ -170,15 +168,15 @@ def send_suggesting_form(request):
         if s_date > timezone.now().date():
             s = Sugerencia(user_id=user_id, title=title, suggesting_date=s_date, content=content, send_date=send_date)
             s.save()
-            return HttpResponseRedirect(reverse('pagina-inicio'))
+            return HttpResponseRedirect(reverse('login-send'))
         else:
             request.session['title'] = title
             request.session['suggesting_date'] = str_s_date
             request.session['content'] = content
             request.session['errors'] = "La fecha seleccionada ya ha pasado. Debe seleccionar una posterior al día de hoy."
-            return HttpResponseRedirect(reverse('pagina-inicio'))
+            return HttpResponseRedirect(reverse('formulario_suggest'))
     else:
-        return HttpResponseRedirect(reverse('pagina-inicio'))
+        return HttpResponseRedirect(reverse('formulario_suggest'))
 
 def is_future_date(date):
     return date > timezone.now().date()
