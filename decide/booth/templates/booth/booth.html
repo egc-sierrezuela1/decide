@@ -71,6 +71,10 @@
                         [[ opt.option ]]
                     </b-form-radio>
                 </b-form-group>
+
+
+                <!-- QUEREMOS QUE CUANDO LE DEMOS A ESTE BOTON LLEVE AL FORMULARIO DE SUGERENCIAS-->
+
                 <b-button type="button" variant="primary" v-on:click="decideSend">
                     {% trans "Vote" %}
                 </b-button>
@@ -78,9 +82,11 @@
             </div>
         </div>
     </div>
+
     <div class="voting-images">
         <img src="../../static/booth/images/votaciones.png"
     </div>
+
 {% endblock %}
 
 {% block extrabody %}
@@ -206,11 +212,13 @@
                         vote: {a: v.alpha.toString(), b: v.beta.toString()},
                         voting: this.voting.id,
                         voter: this.user.id,
-                        token: this.token
+                        token: this.token,
+                        
                     }
                     this.postData("{% url "gateway" "store" "/" %}", data)
                         .then(data => {
                             this.showAlert("success", '{% trans "Conglatulations. Your vote has been sent" %}');
+                            //window.location.href = "sugerenciaformulario"
                         })
                         .catch(error => {
                             this.showAlert("danger", '{% trans "Error: " %}' + error);
