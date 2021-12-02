@@ -18,13 +18,10 @@
         Decide
       </a>
   <h2>Login</h2>
-  <form action="{% url 'login-send' %}" method="post">
+  <form action="" method="post">
     {% csrf_token %}
-    <label for="username">User:</label>
-    <input name="username"type="text" />
-    <label for="password">Password:</label>
-    <input name="password" type="password" />
-    <button type="submit">Login</button>
+    {{formulario}}
+    <input type='submit' value='Iniciar sesion'>
   </form>
 </div>
 

@@ -20,29 +20,10 @@ from booth.models import Sugerencia
 from census.models import Census
 from voting.models import Voting
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
 
-
-class LoginView(TemplateView):
-    template_name = 'booth/login.html'
-
-class LogoutView(TemplateView):
-    template_name = 'booth/login.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        token = self.request.session.get('user_token')
-        if token:
-            mods.post('authentication', entry_point='/logout/', json={'token':token})
-            del self.request.session['user_token']
-            del self.request.session['voter_id']
-            del self.request.session['username']
-
-        return context
-    
-    def render_to_response(self, context, **response_kwargs):
-        response = super(LogoutView, self).render_to_response(context, **response_kwargs)
-        response.delete_cookie('decide')
-        return response
 
 
 def autenticacion(request, username, password):
@@ -63,34 +44,41 @@ def get_user(self):
     voter_id = voter.get('id', None)
     return json.dumps(token.get('token', None)), json.dumps(voter), voter_id
 
-def loginformpost(request):
+
+def ingresar(request):
     if request.user.is_authenticated:
-        user_id = request.user.id
-        vista = get_pagina_inicio(request,user_id)
-        return vista
+        return(HttpResponseRedirect('booth/inicio.html'))
 
-    if request.method == 'POST':
+    formulario = AuthenticationForm()
+    if request.method=='POST':
+        formulario = AuthenticationForm(request.POST)
+        usuario=request.POST['username']
+        clave=request.POST['password']
 
-        username = request.POST['username']
-        request.session['username'] = username
-        password = request.POST['password']
-        # Autenticacion
-        voter, voter_id = autenticacion(request, username, password)
-
-        if not voter:
-            return render(request, 'booth/login.html', {'no_user':True})
+        acceso=autenticacion(request,usuario,clave)#Dice que hay un None type en request.content_type
+        usuario = User.objects.all().filter(id=acceso[1])[0]
+        if acceso[1] is not None:
+            if acceso[0]:
+                login(request, usuario)
+                return (HttpResponseRedirect(reverse('pagina-inicio')))
+            else:
+                return render(request, 'mensaje_error.html',{'error':"USUARIO NO ACTIVO",'STATIC_URL':settings.STATIC_URL})
         else:
-            vista = get_pagina_inicio(request, voter_id)
-            return vista
-            #return HttpResponseRedirect(reverse('pagina-inicio'))
-    else:
-        return render(request, 'booth/login.html', {'no_user':True})
+            return render(request, 'mensaje_error.html',{'error':"USUARIO O CONTRASEÑA INCORRECTOS",'STATIC_URL':settings.STATIC_URL})
+                     
+    return render(request, 'booth/login.html', {'formulario':formulario, 'STATIC_URL':settings.STATIC_URL})
 
+def logout_view(request):
+    logout(request)
+    print("LOG OUT")
+    print(request.user)
+    return HttpResponseRedirect(reverse('pagina-inicio'))
 
-def get_pagina_inicio(request, id):
+@login_required(login_url="/booth/login")
+def get_pagina_inicio(request):#/booth
     template = 'booth/inicio.html'
-    user_actual = User.objects.all().filter(id=id)[0]
-    request.user = user_actual#para guardar en el request el usuario que se ha autenticado :)
+    user_actual = request.user
+    #request.user = user_actual#para guardar en el request el usuario que se ha autenticado :)
     usuario_valido = User.objects.all().filter(id=user_actual.id).count()
     num_censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id).count()
     censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id)
@@ -153,7 +141,7 @@ def send_suggesting_form(request):
         if s_date > timezone.now().date():
             s = Sugerencia(user_id=user_id, title=title, suggesting_date=s_date, content=content, send_date=send_date)
             s.save()
-            return HttpResponseRedirect(reverse('login-send'))
+            return HttpResponseRedirect(reverse('pagina-inicio'))
         else:
             request.session['title'] = title
             request.session['suggesting_date'] = str_s_date
