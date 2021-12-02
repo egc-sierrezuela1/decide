@@ -18,16 +18,94 @@ from django.template import RequestContext
 from booth.models import Sugerencia
 
 from census.models import Census
+from voting.models import Voting
+from django.contrib.auth.models import User
+
+
+class LoginView(TemplateView):
+    template_name = 'booth/login.html'
+
+class LogoutView(TemplateView):
+    template_name = 'booth/login.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        token = self.request.session.get('user_token')
+        if token:
+            mods.post('authentication', entry_point='/logout/', json={'token':token})
+            del self.request.session['user_token']
+            del self.request.session['voter_id']
+            del self.request.session['username']
+
+        return context
+    
+    def render_to_response(self, context, **response_kwargs):
+        response = super(LogoutView, self).render_to_response(context, **response_kwargs)
+        response.delete_cookie('decide')
+        return response
+
+
+def autenticacion(request, username, password):
+    token= mods.post('authentication', entry_point='/login/', json={'username':username, 'password':password})
+    request.session['user_token']=token
+    voter = mods.post('authentication', entry_point='/getuser/', json=token)
+    voter_id = voter.get('id', None)
+    request.session['voter_id'] = voter_id
+
+    if voter_id == None:
+        return False, voter_id
+
+    return True, voter_id
+
+def get_user(self):
+    token = self.request.session.get('user_token', None)
+    voter = mods.post('authentication', entry_point='/getuser/', json=token)
+    voter_id = voter.get('id', None)
+    return json.dumps(token.get('token', None)), json.dumps(voter), voter_id
+
+def loginformpost(request):
+        if request.method == 'POST':
+
+            username = request.POST['username']
+            request.session['username'] = username
+            password = request.POST['password']
+
+            # Autenticacion
+            voter, voter_id = autenticacion(request, username, password)
+
+            if not voter:
+                return render(request, 'booth/login.html', {'no_user':True})
+            else:
+                vista = get_pagina_inicio(request, voter_id)
+                return vista
+                #return HttpResponseRedirect(reverse('pagina-inicio'))
+        else:
+            return render(request, 'booth/login.html', {'no_user':True})
+
+
+def get_pagina_inicio(request, voter_id):
+    template = 'booth/inicio.html'
+    user_actual = User.objects.all().filter(id=voter_id)[0]
+    request.user = user_actual#para guardar en el request el usuario que se ha autenticado :)
+    usuario_valido = User.objects.all().filter(id=user_actual.id).count()
+    num_censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id).count()
+    censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id)
+    return render(request, template, {"censos": censos_votante_actual, "num_censos":num_censos_votante_actual,
+            "user":user_actual, "usuario_valido": usuario_valido})
 
 class Inicio(TemplateView):
     template_name = '/booth/inicio.html'
 
     def get_pagina_inicio(request):
+
         template = 'booth/inicio.html'
         user_actual = request.user
+        usuario_valido = User.objects.all().filter(id=user_actual.id).count()
         num_censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id).count()
         censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id)
-        return render(request, template, {"censos": censos_votante_actual, "num_censos":num_censos_votante_actual, "user":user_actual})
+        return render(request, template, {"censos": censos_votante_actual, "num_censos":num_censos_votante_actual,
+        "user":user_actual, "usuario_valido": usuario_valido})
+        
 
 
 # TODO: check permissions and census
@@ -63,7 +141,7 @@ class SugerenciaVista(FormView):
     #success_url = '/'
 
     def sugerencia_de_voto(request):
-
+        print(request.user)
         if request.method=='POST':
             formulario = SugerenciaForm(request.POST)
             if formulario.is_valid():
@@ -77,9 +155,9 @@ class SugerenciaVista(FormView):
 
 
 def send_suggesting_form(request):
-
+    print(request.user)
     if request.method == 'POST':
-        user_id = request.user.pk
+        user_id = request.user.id
         title = request.POST['suggesting-title']
         str_s_date = request.POST['suggesting-date']
         content = request.POST['suggesting-content']
@@ -90,15 +168,15 @@ def send_suggesting_form(request):
         if s_date > timezone.now().date():
             s = Sugerencia(user_id=user_id, title=title, suggesting_date=s_date, content=content, send_date=send_date)
             s.save()
-            return HttpResponseRedirect(reverse('pagina-inicio'))
+            return HttpResponseRedirect(reverse('login-send'))
         else:
             request.session['title'] = title
             request.session['suggesting_date'] = str_s_date
             request.session['content'] = content
             request.session['errors'] = "La fecha seleccionada ya ha pasado. Debe seleccionar una posterior al día de hoy."
-            return HttpResponseRedirect(reverse('pagina-inicio'))
+            return HttpResponseRedirect(reverse('formulario_suggest'))
     else:
-        return HttpResponseRedirect(reverse('pagina-inicio'))
+        return HttpResponseRedirect(reverse('formulario_suggest'))
 
 def is_future_date(date):
     return date > timezone.now().date()
