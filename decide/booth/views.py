@@ -84,6 +84,7 @@ def get_pagina_inicio(request):#/booth
     censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id)
     return render(request, template, {"censos": censos_votante_actual, "num_censos":num_censos_votante_actual,
             "user":user_actual, "usuario_valido": usuario_valido})
+
         
 # TODO: check permissions and census
 class BoothView(TemplateView):
@@ -91,10 +92,21 @@ class BoothView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        vid = kwargs.get('voting_id', 0)
+        voting_id = kwargs.get('voting_id', 0)
+
+        context['token'], context['voter'], voter_id = get_user(self)
+
+        censos_votante_actual = Census.objects.all().filter(voter_id=voter_id)
+        puede_votar = False
+        for censo in censos_votante_actual:
+            if not puede_votar:
+                if voting_id == censo.voting_id:
+                    puede_votar = True
+        context["puede_votar"] = puede_votar#con esto nos lo llevamos a la vista
+
 
         try:
-            r = mods.get('voting', params={'id': vid})
+            r = mods.get('voting', params={'id': voting_id, "votar": puede_votar})
 
             # Casting numbers to string to manage in javascript with BigInt
             # and avoid problems with js and big number conversion
@@ -115,6 +127,7 @@ class SugerenciaVista(FormView):
     #form_class = SugerenciaForm
     #success_url = '/'
 
+    @login_required(login_url="/booth/login")
     def sugerencia_de_voto(request):
         if request.method=='POST':
             formulario = SugerenciaForm(request.POST)

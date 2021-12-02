@@ -10,6 +10,10 @@
 {% endblock %}
 
 {% block content %}
+    
+    {% if puede_votar %}
+
+
     <div id="app-booth">
         <!-- Navbar -->
         <nav class="navbar navbar-light bg-info">
@@ -33,7 +37,7 @@
         <div class="voting">
             <h1>[[ voting.id ]] - [[ voting.name ]]</h1>
 
-            <!-- Register -->
+            <!-- Register 
             
             <b-form @submit="onSubmitLogin" v-if="signup">
             <div class="col-sm-4">
@@ -59,7 +63,7 @@
                 </b-form-group>
             </div>
                 <b-button type="submit" variant="primary">{% trans "Login" %}</b-button>
-            </b-form>
+            </b-form> -->
 
             <!-- Voting -->
             <div v-if="!signup">
@@ -73,12 +77,10 @@
                     </b-form-radio>
                 </b-form-group>
 
-
-                <!-- QUEREMOS QUE CUANDO LE DEMOS A ESTE BOTON LLEVE AL FORMULARIO DE SUGERENCIAS-->
-
                 <b-button type="button" variant="primary" v-on:click="decideSend">
                     {% trans "Vote" %}
                 </b-button>
+                <b-button type="button" variant="primary" href="{% url "pagina-inicio" %}">Volver</b-button>
             </div> 
         </div>
     </div>
@@ -87,6 +89,14 @@
     <div class="voting-images">
         <img src="../../static/booth/images/votaciones.png"
     </div>
+
+    
+    {% else %}
+        <h2>Error</h2>
+        <div>
+            <p>No tiene acceso a esta votacion <a href="{% url "pagina-inicio" %}">Volver</a></p>
+        </div>
+    {% endif %}
 
 {% endblock %}
 
@@ -109,28 +119,28 @@
 
     <script>
         var voting = {{voting|safe}};
+        var user = {{voter|safe}};
+        var token = {{token|safe}};
         var app = new Vue({
             delimiters: ['[[', ']]'],
             el: '#app-booth',
             data: {
                 keybits: {{ KEYBITS }},
                 voting: voting,
-                selected: "",
-                signup: true,
+                selected: [],
                 alertShow: false,
                 alertMsg: "",
                 alertLvl: "info",
-                token: null,
-                user: null,
-                form: {
-                    username: '',
-                    password: ''
-                },
+                token: token,
+                user: user,
                 bigpk: {
                     p: BigInt.fromJSONObject(voting.pub_key.p.toString()),
                     g: BigInt.fromJSONObject(voting.pub_key.g.toString()),
                     y: BigInt.fromJSONObject(voting.pub_key.y.toString()),
-                }
+                },
+                voteSuccess: false,
+                csspd: false,
+                csstrit: false
             },
             beforeMount() {
                 this.init()

@@ -10,20 +10,22 @@
 {% endblock %}
 
 {% block content %}
-<div>
-    <p>Muchas gracias por participar en la votación, su voto ha sido guardado correctamente.</p>
-</div>
+<div id="app-booth">
+    <nav class="navbar navbar-light bg-info">
+        <a class="navbar-brand" href="#">
+          <img src="../../static/booth/images/decideD.png" width="40" height="30" class="d-inline-block align-top" alt="">
+          Decide
+        </a>
+        <b-navbar-nav class="me-auto" v-if="!signup">
+            <b-nav-item>
+                <a href="{% url "logout" %}">Logout</a>
+            </b-nav-item>
+        </b-navbar-nav>
+    </nav>
+
 <div>
     <h2>Formulario sugerencia de voto</h2>
 </div>
-
-<!-- <form id="formulario" method="POST" action="">{% csrf_token %}
-
-{{ formulario.as_p }}
-
-<p><input type="submit" value="Confirmar"/></p>
-
-</form> -->
 
 <form action="{% url 'suggesting-send' %}" method="POST" aria-describedby="formHelp">
     <div id="formHelp" style="display: none">Formulario para enviar a los administradores del sistema una sugerencia de votación. Debes introducir un título para la votación, la fecha que propones y tus argumentos y razones para incluirla</div>
@@ -57,5 +59,5 @@
         {% endif %}
     </form>
 
-
+</div>
 {% endblock %}
