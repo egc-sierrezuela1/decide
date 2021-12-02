@@ -34,6 +34,7 @@
             <h1>[[ voting.id ]] - [[ voting.name ]]</h1>
 
             <!-- Register -->
+            
             <b-form @submit="onSubmitLogin" v-if="signup">
             <div class="col-sm-4">
                 <b-form-group label="{% trans "Username" %}" label-size="lg" label="Large" label-for="username">
@@ -212,13 +213,11 @@
                         vote: {a: v.alpha.toString(), b: v.beta.toString()},
                         voting: this.voting.id,
                         voter: this.user.id,
-                        token: this.token,
-                        
+                        token: this.token
                     }
                     this.postData("{% url "gateway" "store" "/" %}", data)
                         .then(data => {
                             this.showAlert("success", '{% trans "Conglatulations. Your vote has been sent" %}');
-                            //window.location.href = "sugerenciaformulario"
                         })
                         .catch(error => {
                             this.showAlert("danger", '{% trans "Error: " %}' + error);
@@ -232,5 +231,5 @@
             },
         })
     </script>
-
+</body>
 {% endblock %}

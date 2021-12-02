@@ -1,8 +1,22 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load i18n static %}
 
-{% block title %}Login{% endblock %}
+{% block extrahead %}
+<link type="text/css" rel="stylesheet"
+     href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+<link type="text/css" rel="stylesheet"
+     href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+<link type="text/css" rel="stylesheet" href="{% static "booth/style.css" %}" />
+{% endblock %}
 
 {% block content %}
+<div id="app-booth">
+  <!-- Navbar -->
+  <nav class="navbar navbar-light bg-info">
+      <a class="navbar-brand" >
+        <img src="../../static/booth/images/decideD.png" width="40" height="30" class="d-inline-block align-top" alt="">
+        Decide
+      </a>
   <h2>Login</h2>
   <form action="{% url 'login-send' %}" method="post">
     {% csrf_token %}
@@ -12,4 +26,9 @@
     <input name="password" type="password" />
     <button type="submit">Login</button>
   </form>
+</div>
+
+<div class="voting-images">
+  <img src="../../static/booth/images/votaciones.png"
+</div>
 {% endblock %}

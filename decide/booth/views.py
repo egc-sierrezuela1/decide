@@ -64,50 +64,39 @@ def get_user(self):
     return json.dumps(token.get('token', None)), json.dumps(voter), voter_id
 
 def loginformpost(request):
-        if request.method == 'POST':
+    if request.user.is_authenticated:
+        user_id = request.user.id
+        vista = get_pagina_inicio(request,user_id)
+        return vista
 
-            username = request.POST['username']
-            request.session['username'] = username
-            password = request.POST['password']
+    if request.method == 'POST':
 
-            # Autenticacion
-            voter, voter_id = autenticacion(request, username, password)
+        username = request.POST['username']
+        request.session['username'] = username
+        password = request.POST['password']
+        # Autenticacion
+        voter, voter_id = autenticacion(request, username, password)
 
-            if not voter:
-                return render(request, 'booth/login.html', {'no_user':True})
-            else:
-                vista = get_pagina_inicio(request, voter_id)
-                return vista
-                #return HttpResponseRedirect(reverse('pagina-inicio'))
-        else:
+        if not voter:
             return render(request, 'booth/login.html', {'no_user':True})
+        else:
+            vista = get_pagina_inicio(request, voter_id)
+            return vista
+            #return HttpResponseRedirect(reverse('pagina-inicio'))
+    else:
+        return render(request, 'booth/login.html', {'no_user':True})
 
 
-def get_pagina_inicio(request, voter_id):
+def get_pagina_inicio(request, id):
     template = 'booth/inicio.html'
-    user_actual = User.objects.all().filter(id=voter_id)[0]
+    user_actual = User.objects.all().filter(id=id)[0]
     request.user = user_actual#para guardar en el request el usuario que se ha autenticado :)
     usuario_valido = User.objects.all().filter(id=user_actual.id).count()
     num_censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id).count()
     censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id)
     return render(request, template, {"censos": censos_votante_actual, "num_censos":num_censos_votante_actual,
             "user":user_actual, "usuario_valido": usuario_valido})
-
-class Inicio(TemplateView):
-    template_name = '/booth/inicio.html'
-
-    def get_pagina_inicio(request):
-
-        template = 'booth/inicio.html'
-        user_actual = request.user
-        usuario_valido = User.objects.all().filter(id=user_actual.id).count()
-        num_censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id).count()
-        censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id)
-        return render(request, template, {"censos": censos_votante_actual, "num_censos":num_censos_votante_actual,
-        "user":user_actual, "usuario_valido": usuario_valido})
         
-
-
 # TODO: check permissions and census
 class BoothView(TemplateView):
     template_name = 'booth/booth.html'
@@ -132,8 +121,6 @@ class BoothView(TemplateView):
 
         return context
 
-
-
 #Clase sugerencia de voto para después de rellenar el voto aparezca el formulario de sugerencia
 class SugerenciaVista(FormView):
     template_name = 'booth/sugerenciaform.html'
@@ -141,7 +128,6 @@ class SugerenciaVista(FormView):
     #success_url = '/'
 
     def sugerencia_de_voto(request):
-        print(request.user)
         if request.method=='POST':
             formulario = SugerenciaForm(request.POST)
             if formulario.is_valid():
@@ -155,7 +141,6 @@ class SugerenciaVista(FormView):
 
 
 def send_suggesting_form(request):
-    print(request.user)
     if request.method == 'POST':
         user_id = request.user.id
         title = request.POST['suggesting-title']
@@ -176,7 +161,7 @@ def send_suggesting_form(request):
             request.session['errors'] = "La fecha seleccionada ya ha pasado. Debe seleccionar una posterior al día de hoy."
             return HttpResponseRedirect(reverse('formulario_suggest'))
     else:
-        return HttpResponseRedirect(reverse('formulario_suggest'))
+        return HttpResponseRedirect(reverse('booth/inicio.html'))
 
 def is_future_date(date):
     return date > timezone.now().date()
