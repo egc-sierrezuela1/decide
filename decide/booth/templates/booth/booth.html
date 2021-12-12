@@ -1,5 +1,7 @@
 {% extends "base.html" %}
+
 {% load i18n static %}
+
 
 {% block extrahead %}
     <link type="text/css" rel="stylesheet"
@@ -73,12 +75,29 @@
                     </b-form-radio>
                 </b-form-group>
 
-
-                <!-- QUEREMOS QUE CUANDO LE DEMOS A ESTE BOTON LLEVE AL FORMULARIO DE SUGERENCIAS-->
-
                 <b-button type="button" variant="primary" v-on:click="decideSend">
                     {% trans "Vote" %}
                 </b-button>
+
+                <br>
+                
+                <b-card-group>
+                    <b-card header="Recuento de votos">
+                      <b-list-group v-for="opt in voting.question.options" :key="opt.number">
+                        <b-list-group-item class="d-flex justify-content-between align-items-center"
+                            :id="'q' + opt.number"
+                            :value="opt.number">[[ opt.option ]]             
+                            <!--<b-badge variant="primary" pill>[[ opt.number ]]</b-badge>-->
+                        </b-list-group-item>
+                      </b-list-group>
+                  
+                      <p class="card-text mt-2">
+                        Número de votos totales computados: {{ votos }}
+                      </p>
+                    </b-card>
+                </b-card-group>
+
+                
             </div> 
         </div>
     </div>

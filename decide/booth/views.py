@@ -19,6 +19,7 @@ from booth.models import Sugerencia
 
 from census.models import Census
 from voting.models import Voting
+from store.models import Vote
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
@@ -102,6 +103,8 @@ class BoothView(TemplateView):
                 r[0]['pub_key'][k] = str(v)
 
             context['voting'] = json.dumps(r[0])
+
+            context['votos'] = Vote.objects.all().filter(voting_id=vid).count()
         except:
             raise Http404
 
