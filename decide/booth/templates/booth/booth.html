@@ -32,34 +32,6 @@
         <div class="voting">
             <h1>[[ voting.id ]] - [[ voting.name ]]</h1>
 
-            <!-- Register 
-            
-            <b-form @submit="onSubmitLogin" v-if="signup">
-            <div class="col-sm-4">
-                <b-form-group label="{% trans "Username" %}" label-size="lg" label="Large" label-for="username">
-                    <b-form-input
-                        id="username"
-                        type="text"
-                        size="lg"
-                        v-model="form.username"
-                        autocomplete="username"
-                        required />
-                </b-form-group>
-            </div>
-            <div class="col-sm-4">
-                <b-form-group label="{% trans "Password" %}" label-size="lg" label="Large" label-for="password">
-                    <b-form-input
-                        id="password"
-                        type="password"
-                        size="lg"
-                        autocomplete="current-password"
-                        v-model="form.password"
-                        required />
-                </b-form-group>
-            </div>
-                <b-button type="submit" variant="primary">{% trans "Login" %}</b-button>
-            </b-form> -->
-
             <!-- Voting -->
             <div v-if="!signup">
                 <h2>[[ voting.question.desc ]]</h2>

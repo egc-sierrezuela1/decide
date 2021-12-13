@@ -19,6 +19,7 @@ from booth.models import Sugerencia
 
 from census.models import Census
 from voting.models import Voting
+from store.models import Vote
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
@@ -68,6 +69,11 @@ def ingresar(request):
                      
     return render(request, 'booth/login.html', {'formulario':formulario, 'STATIC_URL':settings.STATIC_URL})
 
+def check_user_has_voted(context, voting_id, voter_id):
+    number_of_votes = Vote.objects.filter(voting_id=voting_id,voter_id=voter_id).count()
+    if number_of_votes !=0:
+        context['voted'] = True
+
 def logout_view(request):
     logout(request)
     print("LOG OUT")
@@ -114,6 +120,7 @@ class BoothView(TemplateView):
                 r[0]['pub_key'][k] = str(v)
 
             context['voting'] = json.dumps(r[0])
+            check_user_has_voted(context, voting_id, voter_id)
         except:
             raise Http404
 
