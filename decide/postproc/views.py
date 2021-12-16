@@ -14,8 +14,9 @@ class PostProcView(APIView):
             });
 
         out.sort(key=lambda x: -x['postproc'])
-        return Response(out)
+        return out
 
+    
     def post(self, request):
         """
          * type: IDENTITY | EQUALITY | WEIGHT
@@ -29,10 +30,30 @@ class PostProcView(APIView):
            ]
         """
 
-        t = request.data.get('type', 'IDENTITY')
-        opts = request.data.get('options', [])
+        out = []
+        questions = request.data
 
-        if t == 'IDENTITY':
-            return self.identity(opts)
+        for q in questions:
+            result = None
+            t = q['type']
+            opts = q['options']
 
-        return Response({})
+            if t == 'IDENTITY':
+                result = self.identity(opts)
+            '''if t == 'BORDA':
+                result = self.borda(opts)
+            if t == 'EQUALITY':
+                result = self.equality(opts)
+            if t == 'SAINTE_LAGUE' or t == 'HONDT':
+                result = self.proportional_representation(opts, t)
+            if t == 'DROOP':
+                result = self.droop(opts)
+            if t == 'IMPERIALI':
+                result = self.imperiali(opts)
+            if t == 'HARE':
+                result = self.hare(opts)'''
+
+            out.append({'type': t, 'options': result})
+
+
+        return Response(out)
