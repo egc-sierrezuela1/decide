@@ -25,10 +25,10 @@ class SugerenciaVoto(models.Model):
 
 class Sugerencia(models.Model):#egc-guadalentin
     user_id = models.IntegerField()
-    title = models.CharField(max_length=200)
-    suggesting_date = models.DateField()
-    content = models.TextField()
-    send_date = models.DateField()
+    title = models.CharField(max_length=200, blank=False)
+    suggesting_date = models.DateField(blank=False)
+    content = models.TextField(blank=False, max_length=4000)
+    send_date = models.DateField(blank=False)
     is_approved = models.NullBooleanField()
 
     def __str__(self):
