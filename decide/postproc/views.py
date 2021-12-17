@@ -40,18 +40,6 @@ class PostProcView(APIView):
 
             if t == 'IDENTITY':
                 result = self.identity(opts)
-            '''if t == 'BORDA':
-                result = self.borda(opts)
-            if t == 'EQUALITY':
-                result = self.equality(opts)
-            if t == 'SAINTE_LAGUE' or t == 'HONDT':
-                result = self.proportional_representation(opts, t)
-            if t == 'DROOP':
-                result = self.droop(opts)
-            if t == 'IMPERIALI':
-                result = self.imperiali(opts)
-            if t == 'HARE':
-                result = self.hare(opts)'''
 
             out.append({'type': t, 'options': result})
 
