@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block content %}
+
 <div id="app-booth">
   <!-- Navbar -->
   <nav class="navbar navbar-light bg-info">
@@ -17,15 +18,36 @@
         <img src="../../static/booth/images/decideD.png" width="40" height="30" class="d-inline-block align-top" alt="">
         Decide
       </a>
-  <h2>Login</h2>
   <form action="" method="post">
-    {% csrf_token %}
-    {{formulario}}
-    <input type='submit' value='Iniciar sesion'>
-  </form>
-</div>
 
-<div class="voting-images">
+    {% csrf_token %}
+
+      <div class="row">
+
+        <div class="col">
+          <label class="text-justify" for="username">Usuario</label>
+          <input type="text" name="username" class="form-control" id="username" aria-labelledby="usernameHelp">
+         
+          </div>
+
+      <div class="col">
+          <label class="text-justify" for="password">Contraseña</label>
+          <input type="password" name="password" class="form-control" id="password" aria-labelledby="passHelp">
+          </div>
+
+        <div class="form-check mb-2">
+          <input class="form-check-input" type="checkbox" id="autoSizingCheck">
+          <label class="form-check-label" for="autoSizingCheck">
+             Remember me
+          </div>
+      </div>   
+    <input type='submit' value='Iniciar sesion'> 
+  </form>
+</div> 
+
+<br>
+<br>
+<div class="rounded mx-auto d-block" >
   <img src="../../static/booth/images/votaciones.png"
 </div>
 {% endblock %}

@@ -51,21 +51,18 @@ def ingresar(request):
         return(HttpResponseRedirect('booth/inicio.html'))
 
     formulario = AuthenticationForm()
+    
     if request.method=='POST':
         formulario = AuthenticationForm(request.POST)
         usuario=request.POST['username']
         clave=request.POST['password']
 
         acceso=autenticacion(request,usuario,clave)#Dice que hay un None type en request.content_type
-        usuario = User.objects.all().filter(id=acceso[1])[0]
         if acceso[1] is not None:
+            usuario = User.objects.all().filter(id=acceso[1])[0]
             if acceso[0]:
                 login(request, usuario)
                 return (HttpResponseRedirect(reverse('pagina-inicio')))
-            else:
-                return render(request, 'mensaje_error.html',{'error':"USUARIO NO ACTIVO",'STATIC_URL':settings.STATIC_URL})
-        else:
-            return render(request, 'mensaje_error.html',{'error':"USUARIO O CONTRASEÑA INCORRECTOS",'STATIC_URL':settings.STATIC_URL})
                      
     return render(request, 'booth/login.html', {'formulario':formulario, 'STATIC_URL':settings.STATIC_URL})
 
@@ -120,6 +117,7 @@ class BoothView(TemplateView):
                 r[0]['pub_key'][k] = str(v)
 
             context['voting'] = json.dumps(r[0])
+            context['votos'] = Vote.objects.all().filter(voting_id=voting_id).count()
             check_user_has_voted(context, voting_id, voter_id)
         except:
             raise Http404

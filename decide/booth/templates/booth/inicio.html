@@ -24,25 +24,31 @@
     </b-navbar-nav>
     {% endif %}
 </nav>
+<h1 class="display-2">Bienvenido, {{user}}</h1>
+<br>
+<br>
+<table class="table">
 
-<div> 
-    <h2>Formulario para sugerencias</h2>
-    <a href="sugerenciaformulario/">Formulario de sugerencia</a>
-</div>
-</br>
-<div>
-    <h2>Puede votar en estas votaciones:</h2>
-    <p>Bienvenido, {{user}}</p>
-    <p>Puede votar en {{num_censos}} censos:</p>
+    <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Formulario para sugerencias</th>
+          <th scope="col">Puede votar en estas votaciones:</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <th scope="row"></th>
+          <td><a href="sugerenciaformulario/">Formulario de sugerencia</a></td>
+          <td>
+            {% for censo in censos %}
+            <p>ID del voto: {{censo.voting_id}} <a href="{{censo.voting_id}}">Acceder a la cabina del voto</a></p>
+            {% endfor %} 
+        </td>
+        </tr>
+</table>
 
-    <p>El id del censo al que puede votar es:</p>
-    {% for censo in censos %}
-        <p>ID del voto: {{censo.voting_id}} <a href="{{censo.voting_id}}">Acceder a la cabina del voto</a></p>
-    {% endfor %} 
-
-</div>
-
-<div class="voting-images-inicio">
+<div class="rounded mx-auto d-block" >
     <img src="../../static/booth/images/votaciones.png"
   </div>
 {% endblock %}

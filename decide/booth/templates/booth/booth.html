@@ -48,6 +48,11 @@
                     {% trans "Vote" %}
                 </b-button>
                 <b-button type="button" variant="primary" href="{% url "pagina-inicio" %}">Volver</b-button>
+
+                <br>
+                    <p class="card-text mt-2">
+                    Número de votos totales computados en esta votacion: {{ votos }}
+                    </p>
             </div> 
         </div>
     </div>
