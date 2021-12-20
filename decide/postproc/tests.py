@@ -101,13 +101,47 @@ class PostProcTestCase(APITestCase):
             ]
         }]
 
-        print("VALUE:")
-        print(data)
-        print("EXPECTED_VALUE:")
-        print(expected_result)
-
         response = self.client.post('/postproc/', data, format='json')
         self.assertEqual(response.status_code, 200)
 
         values = response.json()
         self.assertEqual(values, expected_result)
+
+
+    #Value y expected_result son distintos
+    def test_identity_multiple_questions_fails(self):
+        data = [{
+            'type': 'IDENTITY',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'votes': 5},
+                {'option': 'Option 2', 'number': 2, 'votes': 0},
+                {'option': 'Option 3', 'number': 3, 'votes': 3}
+            ]
+        }, {
+            'type': 'IDENTITY',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'votes': 2},
+                {'option': 'Option 2', 'number': 2, 'votes': 5},
+                {'option': 'Option 3', 'number': 3, 'votes': 1}
+            ]
+        }]
+
+        #El orden debe ser descendente, según el serializer
+        expected_result = [{
+            'type': 'IDENTITY',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'votes': 5,
+                 'postproc': 5},
+                {'option': 'Option 3', 'number': 3, 'votes': 3,
+                 'postproc': 3},
+                {'option': 'Option 2', 'number': 2, 'votes': 0,
+                 'postproc': 0}
+            ]
+        }]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertNotEqual(values, expected_result)
+        
