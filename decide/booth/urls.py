@@ -12,6 +12,6 @@ urlpatterns = [
     path('login/', ingresar),
     path('logout/', logout_view, name="logout"),
     path('<int:voting_id>/', BoothView.as_view(), name="votacion"),
-    path('sugerenciaformulario/', SugerenciaVista.sugerencia_de_voto),
+    path('sugerenciaformulario/', SugerenciaVista.sugerencia_de_voto, name="formulario_suggest"),
     path('sugerenciaformulario/send/', send_suggesting_form, name="suggesting-send")
 ]

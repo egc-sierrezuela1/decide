@@ -27,6 +27,7 @@
     <h2>Formulario sugerencia de voto</h2>
 </div>
 
+
 <form action="{% url 'suggesting-send' %}" method="POST" aria-describedby="formHelp">
     <div id="formHelp" style="display: none">Formulario para enviar a los administradores del sistema una sugerencia de votación. Debes introducir un título para la votación, la fecha que propones y tus argumentos y razones para incluirla</div>
         {% csrf_token %}
@@ -36,6 +37,11 @@
                 {% if suggesting %} value="{{suggesting.title}}" readonly {% endif %}
                 {% if post_data %} value="{{post_data.title}}" {% endif %}>
         </div>
+        {% if error %}
+            <p style="color: red;">
+                Por favor, seleccione una fecha posterior al día de hoy.
+            </p>
+        {% endif %}
         <div class="form-group">
             <label for="suggestingDate">Fecha propuesta</label>
             <input name="suggesting-date" type="date" class="form-control" id="suggestingDate" required
@@ -61,3 +67,4 @@
 
 </div>
 {% endblock %}
+
