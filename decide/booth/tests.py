@@ -88,7 +88,7 @@ class FormSugerenciaTest(TestCase):
 
         data = {'suggesting-title': 'Suggesting', 'suggesting-date': date, 'suggesting-content': 'Full suggesting content...'}
 
-        request = self.request_factory.post('booth/sugerenciaformulario/', data)
+        request = self.request_factory.post('booth/sugerenciaformulario/send', data)
         request.user = self.user #le meto el usuario a mano
 
         initital_suggesting_counter = Sugerencia.objects.all().count()
