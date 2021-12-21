@@ -16,23 +16,52 @@ class PostProcView(APIView):
         out.sort(key=lambda x: -x['postproc'])
         return Response(out)
 
-    def post(self, request):
-        """
-         * type: IDENTITY | EQUALITY | WEIGHT
-         * options: [
-            {
-             option: str,
-             number: int,
-             votes: int,
-             ...extraparams
-            }
-           ]
-        """
 
-        t = request.data.get('type', 'IDENTITY')
-        opts = request.data.get('options', [])
+    def proportional_representation(self, options, type): #EGC-GUADALENTIN
+        out = []
+        votes = []
+        points_for_opt = []
+        multiplier = 1
+        points = options[0]['points']
+        zero_votes = True
 
-        if t == 'IDENTITY':
-            return self.identity(opts)
+        for i in range(0, len(options)):
+            votes.append(options[i]['votes'])
+            points_for_opt.append(0)
+            if zero_votes is True and options[i]['votes'] != 0:
+                zero_votes = False
 
-        return Response({})
+        if zero_votes is False:
+            for i in range(0, points):
+                max_index = votes.index(max(votes))
+                points_for_opt[max_index] += 1
+                votes[max_index] = options[max_index]['votes'] / (multiplier * points_for_opt[max_index] + 1)
+
+        for i in range(0, len(options)):
+            out.append({
+                **options[i],
+                'postproc': points_for_opt[i],
+            })
+
+        out.sort(key=lambda x: (-x['postproc'], -x['votes']))
+        return out
+        
+
+    def post(self, request): #EGC-GUADALENTIN
+        out = []
+        questions = request.data
+
+        for q in questions:
+            result = None
+            t = q['type']
+            opts = q['options']
+
+            if t == 'IDENTITY':
+                result = self.identity(opts)
+            if t == 'HONDT':
+                result = self.proportional_representation(opts, t)
+
+            out.append({'type': t, 'options': result})
+
+
+        return Response(out)
