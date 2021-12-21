@@ -16,7 +16,28 @@ class PostProcView(APIView):
         out.sort(key=lambda x: -x['postproc'])
         return out
 
-    
+    def borda(self, options):
+        out = []
+        #Numero total de questions para ordenar por preferencia
+        n = len(options)
+
+        for opt in options:
+            votos = 0
+            preference = 0
+
+            while preference < n:
+                #Preference es una variable que indica el orden de preferencia de las respuestas a las questions de las votaciones
+                votos += (n-preference)* opt['votes'][preference]
+                preference +=1
+
+            out.append({
+                    **opt,
+                    'postproc': votos,
+                })
+
+        out.sort(key=lambda x: -x['postproc'])
+        return out
+
     def post(self, request):
         """
          * type: IDENTITY | EQUALITY | WEIGHT
