@@ -139,9 +139,42 @@ class PostProcTestCase(APITestCase):
             ]
         }]
 
+
+
         response = self.client.post('/postproc/', data, format='json')
         self.assertEqual(response.status_code, 200)
 
         values = response.json()
         self.assertNotEqual(values, expected_result)
+
+    def test_borda(self):
+        data = [{
+            'type': 'BORDA',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'votes': [6, 1, 2, 4, 3, 2]},
+                {'option': 'Option 2', 'number': 2, 'votes': [1, 2, 7, 1, 6, 1]},
+                {'option': 'Option 3', 'number': 3, 'votes': [2, 7, 4, 3, 1, 1]},
+                {'option': 'Option 4', 'number': 4, 'votes': [4, 1, 2, 4, 3, 4]},
+                {'option': 'Option 5', 'number': 5, 'votes': [3, 6, 2, 2, 1, 4]},
+                {'option': 'Option 6', 'number': 6, 'votes': [2, 1, 1, 4, 4, 6]},
+            ]
+        }]
+
+        expected_result = [{
+            'type': 'BORDA',
+            'options': [
+                {'option': 'Option 3', 'number': 3, 'votes': [2, 7, 4, 3, 1, 1], 'postproc': 75},
+                {'option': 'Option 1', 'number': 1, 'votes': [6, 1, 2, 4, 3, 2], 'postproc': 69},
+                {'option': 'Option 5', 'number': 5, 'votes': [3, 6, 2, 2, 1, 4], 'postproc': 68},
+                {'option': 'Option 2', 'number': 2, 'votes': [1, 2, 7, 1, 6, 1], 'postproc': 60},
+                {'option': 'Option 4', 'number': 4, 'votes': [4, 1, 2, 4, 3, 4], 'postproc': 59},
+                {'option': 'Option 6', 'number': 6, 'votes': [2, 1, 1, 4, 4, 6], 'postproc': 47},
+            ]
+        }]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
         

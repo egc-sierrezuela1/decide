@@ -61,8 +61,9 @@ class PostProcView(APIView):
 
             if t == 'IDENTITY':
                 result = self.identity(opts)
-            '''if t == 'BORDA':
+            if t == 'BORDA':
                 result = self.borda(opts)
+            '''
             if t == 'EQUALITY':
                 result = self.equality(opts)
             if t == 'SAINTE_LAGUE' or t == 'HONDT':
