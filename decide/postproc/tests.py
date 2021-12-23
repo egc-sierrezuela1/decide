@@ -177,4 +177,63 @@ class PostProcTestCase(APITestCase):
 
         values = response.json()
         self.assertEqual(values, expected_result)
+
+    def test_borda_one_option(self):
+        data = [{
+            'type': 'BORDA',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'votes': [4]},
+                {'option': 'Option 2', 'number': 2, 'votes': [3]},
+                {'option': 'Option 3', 'number': 3, 'votes': [2]},
+                {'option': 'Option 4', 'number': 4, 'votes': [1]},
+            ]
+        }]
+
+        expected_result = [{
+            'type': 'BORDA',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'votes': [4], 'postproc': 4},
+                {'option': 'Option 2', 'number': 2, 'votes': [3], 'postproc': 3},
+                {'option': 'Option 3', 'number': 3, 'votes': [2], 'postproc': 2},
+                {'option': 'Option 4', 'number': 4, 'votes': [1], 'postproc': 1},
+            ]
+        }]
+
+        #El resultado debe cuadrar con las votaciones de cada opcion ya que no se ha establecido un orden de preferencia, si no que unicamente se ha votado
+        #por la opcion preferida y el factor multiplicador será 1
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+    def test_borda_different_size_preferences(self):
+        data = [{
+            'type': 'BORDA',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'votes': [4,2]},
+                {'option': 'Option 2', 'number': 2, 'votes': [2,2,3]},
+                {'option': 'Option 3', 'number': 3, 'votes': [2,2]},
+                {'option': 'Option 4', 'number': 4, 'votes': [1,3]},
+            ]
+        }]
+
+        expected_result = [{
+            'type': 'BORDA',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'votes': [4,2], 'postproc': 10},
+                {'option': 'Option 3', 'number': 3, 'votes': [2,2], 'postproc': 6},
+                {'option': 'Option 4', 'number': 4, 'votes': [1,3], 'postproc': 5},
+                {'option': 'Option 2', 'number': 2, 'votes': [2,2,3], 'postproc': 0},
+            ]
+        }]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+        #COMPLETAR ESTE CON RESULTADOS NORMALES
         

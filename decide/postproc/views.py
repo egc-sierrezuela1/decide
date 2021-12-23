@@ -18,18 +18,23 @@ class PostProcView(APIView):
 
     def borda(self, options):
         out = []
-        #Numero total de questions para ordenar por preferencia
-        n = len(options)
+
+        #Vamos a comprobar que todas las opciones cuentan con el mismo número de votos ordenados por preferencia. 
+        #Una lista de votes no puede tener dos valores y otra 1
+        nsize = len(options[0]['votes'])
 
         for opt in options:
+            #if opt['number'] == 1:
+                #nsize = len(opt['votes'])
             votos = 0
             preference = 0
-
-            while preference < n:
-                #Preference es una variable que indica el orden de preferencia de las respuestas a las questions de las votaciones
-                votos += (n-preference)* opt['votes'][preference]
-                preference +=1
-
+            #Numero total de votos por questions para ordenar por preferencia
+            n = len(opt['votes'])        
+            if nsize == n:
+                while preference < n:
+                    #Preference es una variable que indica el orden de preferencia de las respuestas a las questions de las votaciones
+                    votos += (n-preference)* opt['votes'][preference]
+                    preference +=1
             out.append({
                     **opt,
                     'postproc': votos,
