@@ -24,8 +24,6 @@ class PostProcView(APIView):
         nsize = len(options[0]['votes'])
 
         for opt in options:
-            #if opt['number'] == 1:
-                #nsize = len(opt['votes'])
             votos = 0
             preference = 0
             #Numero total de votos por questions para ordenar por preferencia

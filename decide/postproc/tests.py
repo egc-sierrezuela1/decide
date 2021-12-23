@@ -225,6 +225,7 @@ class PostProcTestCase(APITestCase):
                 {'option': 'Option 1', 'number': 1, 'votes': [4,2], 'postproc': 10},
                 {'option': 'Option 3', 'number': 3, 'votes': [2,2], 'postproc': 6},
                 {'option': 'Option 4', 'number': 4, 'votes': [1,3], 'postproc': 5},
+                #Como la opcion 2 tiene mas variables se considera nula
                 {'option': 'Option 2', 'number': 2, 'votes': [2,2,3], 'postproc': 0},
             ]
         }]
@@ -235,5 +236,4 @@ class PostProcTestCase(APITestCase):
         values = response.json()
         self.assertEqual(values, expected_result)
 
-        #COMPLETAR ESTE CON RESULTADOS NORMALES
         
