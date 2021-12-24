@@ -316,4 +316,77 @@ class PostProcTestCase(APITestCase):
 
             response = self.client.post('/postproc/', data, format='json')
 
+    
+    def test_sainte_lague(self):
+        data = [{
+            'type': 'SAINTE_LAGUE',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'points': 8, 'votes_masc': 0, 'votes_fem': 0, 'votes': 500000},
+                {'option': 'Option 2', 'number': 2, 'points': 8, 'votes_masc': 0, 'votes_fem': 0, 'votes': 420000},
+                {'option': 'Option 3', 'number': 3, 'points': 8, 'votes_masc': 0, 'votes_fem': 0, 'votes': 310000},
+                {'option': 'Option 4', 'number': 4, 'points': 8, 'votes_masc': 0, 'votes_fem': 0, 'votes': 180000},
+                {'option': 'Option 5', 'number': 5, 'points': 8, 'votes_masc': 0, 'votes_fem': 0, 'votes': 20000},
+            ]
+        }]
+
+        expected_result = [{
+            'type': 'SAINTE_LAGUE',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'points': 8, 'votes_masc': 0, 'votes_fem': 0, 'votes': 500000,
+                 'postproc': 3},
+                {'option': 'Option 2', 'number': 2, 'points': 8, 'votes_masc': 0, 'votes_fem': 0, 'votes': 420000,
+                 'postproc': 2},
+                {'option': 'Option 3', 'number': 3, 'points': 8, 'votes_masc': 0, 'votes_fem': 0, 'votes': 310000,
+                 'postproc': 2},
+                {'option': 'Option 4', 'number': 4, 'points': 8, 'votes_masc': 0, 'votes_fem': 0, 'votes': 180000,
+                 'postproc': 1},
+                {'option': 'Option 5', 'number': 5, 'points': 8, 'votes_masc': 0, 'votes_fem': 0, 'votes': 20000,
+                 'postproc': 0},
+            ]
+        }]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
+
+    def test_sainte_lague2(self):
+        data = [{
+            'type': 'SAINTE_LAGUE',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 500000},
+                {'option': 'Option 2', 'number': 2, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 420000},
+                {'option': 'Option 3', 'number': 3, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 310000},
+                {'option': 'Option 4', 'number': 4, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 200000},
+                {'option': 'Option 5', 'number': 5, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 180000},
+                {'option': 'Option 6', 'number': 6, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 170000},
+            ]
+        }]
+
+        expected_result = [{
+            'type': 'SAINTE_LAGUE',
+            'options': [
+                {'option': 'Option 1', 'number': 1, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 500000,
+                 'postproc': 3},
+                {'option': 'Option 2', 'number': 2, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 420000,
+                 'postproc': 2},
+                {'option': 'Option 3', 'number': 3, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 310000,
+                 'postproc': 2},
+                {'option': 'Option 4', 'number': 4, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 200000,
+                 'postproc': 1},
+                {'option': 'Option 5', 'number': 5, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 180000,
+                 'postproc': 1},
+                {'option': 'Option 6', 'number': 6, 'points': 10, 'votes_masc': 0, 'votes_fem': 0, 'votes': 170000,
+                 'postproc': 1},
+            ]
+        }]
+
+        response = self.client.post('/postproc/', data, format='json')
+        self.assertEqual(response.status_code, 200)
+
+        values = response.json()
+        self.assertEqual(values, expected_result)
+
         
