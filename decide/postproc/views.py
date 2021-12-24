@@ -71,6 +71,9 @@ class PostProcView(APIView):
             if t == 'IDENTITY':
                 result = self.identity(opts)
 
+            if t == 'HONDT':
+                result = self.proportional_representation(opts, t)
+
             out.append({'type': t, 'options': result})
 
 
