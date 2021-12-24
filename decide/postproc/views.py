@@ -48,20 +48,22 @@ class PostProcView(APIView):
         
 
     def post(self, request): #EGC-GUADALENTIN
-        out = []
-        questions = request.data
+        """
+         * type: IDENTITY | EQUALITY | WEIGHT
+         * options: [
+            {
+             option: str,
+             number: int,
+             votes: int,
+             ...extraparams
+            }
+           ]
+        """
 
-        for q in questions:
-            result = None
-            t = q['type']
-            opts = q['options']
+        t = request.data.get('type', 'IDENTITY')
+        opts = request.data.get('options', [])
 
-            if t == 'IDENTITY':
-                result = self.identity(opts)
-            if t == 'HONDT':
-                result = self.proportional_representation(opts, t)
+        if t == 'IDENTITY':
+            return self.identity(opts)
 
-            out.append({'type': t, 'options': result})
-
-
-        return Response(out)
+        return Response({})
