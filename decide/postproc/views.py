@@ -80,7 +80,8 @@ class PostProcView(APIView):
         out = []
         votes = []
         points_for_opt = []
-        multiplier = 1
+        #Sainte Lague reparte los escaños de forma más equitativa, penalizando en mayor medida mientras más escaños tenga una opción
+        multiplier = 2 if type == 'SAINTE_LAGUE' else 1
         points = options[0]['points']
         zero_votes = True
 
