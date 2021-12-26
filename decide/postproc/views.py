@@ -11,7 +11,40 @@ class PostProcView(APIView):
             out.append({
                 **opt,
                 'postproc': opt['votes'],
-            });
+            })
+
+        out.sort(key=lambda x: -x['postproc'])
+        return Response(out)
+
+      
+    def equality(self, options):
+        out = []
+        n_women = 0
+        n_men = 0
+        rel = 0.
+        is_men_greater = False
+
+        for opt in options:
+            n_women += opt['votes_women']
+            n_men += opt['votes_men']
+
+        if n_women > n_men:
+            rel = n_men/n_women
+        else:
+            rel = n_women/n_men
+            is_men_greater = True
+
+        for opt in options:
+            votes = 0
+            if is_men_greater:
+                votes = opt['votes_women'] + opt['votes_men']*rel
+            else:
+                votes = opt['votes_men'] + opt['votes_women']*rel
+
+            out.append({
+                **opt,
+                'postproc': round(votes),
+            })
 
         out.sort(key=lambda x: -x['postproc'])
         return out
@@ -72,6 +105,7 @@ class PostProcView(APIView):
         out.sort(key=lambda x: (-x['postproc'], -x['votes']))
         return out
 
+      
     def post(self, request):
 
         """
@@ -82,6 +116,16 @@ class PostProcView(APIView):
              number: int,
              votes: int,
              ...extraparams
+            }
+           ]
+
+        * type: EQUALITY
+        * options: [
+            {
+             option: str,
+             number: int,
+             votes_men: int,
+             votes_women: int,
             }
            ]
         """
@@ -102,8 +146,7 @@ class PostProcView(APIView):
                 result = self.equality(opts)
             if t == 'SAINTE_LAGUE' or t == 'HONDT':
                 result = self.proportional_representation(opts, t)
-
+                
             out.append({'type': t, 'options': result})
-
 
         return Response(out)
