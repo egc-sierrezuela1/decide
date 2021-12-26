@@ -14,6 +14,15 @@ from django.urls import reverse
 from django.conf import settings
 from django.utils import timezone
 
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+
+from base.tests import BaseTestCase
+
 
 from mixnet.models import Auth
 from base import mods
@@ -161,3 +170,112 @@ class FormSugerenciaTest(TestCase):
     def test_is_future_date_with_future_date(self):
         date = timezone.now().date() + datetime.timedelta(weeks=1)
         self.assertEqual(is_future_date(date), True)
+
+
+    #--------------------------------------TEST NAVEGACION---------------------------------------------
+
+class NavigationTest(StaticLiveServerTestCase):
+    
+    def setUp(self):
+        #Load base test functionality for decide
+        self.base = BaseTestCase()
+        self.base.setUp()
+
+        options = webdriver.ChromeOptions()
+        options.headless = True
+        self.driver = webdriver.Chrome(options=options)
+
+        LoginTest.setUp(self)
+
+        super().setUp()         
+
+    def tearDown(self):           
+        super().tearDown()
+        self.driver.quit()
+        self.base.tearDown()    
+
+    '''
+    def test_navigation_login(self):
+
+        self.driver.get(f'{self.live_server_url}/booth/login/')
+        self.driver.find_element_by_name('username').send_keys("voter1")
+        self.driver.find_element_by_name('password').send_keys("1234")
+        self.driver.find_element_by_id("submit").click()
+
+        print('ENTRA AQUI: ' + self.driver.current_url)
+        self.assertEquals(self.driver.current_url,f'{self.live_server_url}/booth/')
+
+    def test_navigation_login_fail(self):
+        #Comprobamos que si no se introducen datos de inicio se mantiene en la pagina de login
+
+        self.driver.get(f'{self.live_server_url}/booth/login/')
+        self.driver.find_element_by_name('username').send_keys("failvoter")
+        self.driver.find_element_by_name('password').send_keys("fail")
+        self.driver.find_element_by_id('submit').click()
+
+        self.assertEquals(self.driver.current_url,f'{self.live_server_url}/booth/login/')
+
+    def test_navigation_sugerencias_form(self):
+
+        self.driver.get(f'{self.live_server_url}/booth/login/')
+        self.driver.find_element_by_name('username').send_keys("voter1")
+        self.driver.find_element_by_name('password').send_keys("1234")
+        self.driver.find_element_by_id("submit").click()
+
+        self.driver.find_element_by_id("id_sugerencias").click()
+
+        self.driver.find_element_by_id('suggestingTitle').send_keys("Propuesta tests")
+        self.driver.find_element_by_id('suggestingDate').send_keys("01-01-2023")
+        self.driver.find_element_by_id('suggestingContent').send_keys("Propuesta para hacer una nueva votacion como parte de los test de navegacion")
+        self.driver.find_element_by_id('submitSugForm').click()
+
+        self.assertEquals(self.driver.current_url,f'{self.live_server_url}/booth/')
+
+    def test_navegacion_sugerencias_form_empty_title(self):
+
+        self.driver.get(f'{self.live_server_url}/booth/login/')
+        self.driver.find_element_by_name('username').send_keys("voter1")
+        self.driver.find_element_by_name('password').send_keys("1234")
+        self.driver.find_element_by_id("submit").click()
+
+        self.driver.find_element_by_id("id_sugerencias").click()
+
+        self.driver.find_element_by_id('suggestingTitle').send_keys("")
+        self.driver.find_element_by_id('suggestingDate').send_keys("01-01-2023")
+        self.driver.find_element_by_id('suggestingContent').send_keys("Propuesta para hacer una nueva votacion como parte de los test de navegacion")
+        self.driver.find_element_by_id('submitSugForm').click()
+
+        self.assertEquals(self.driver.current_url,f'{self.live_server_url}/booth/sugerenciaformulario/')
+
+    def test_navigation_sugerencias_form_empty_date(self):
+
+        self.driver.get(f'{self.live_server_url}/booth/login/')
+        self.driver.find_element_by_name('username').send_keys("voter1")
+        self.driver.find_element_by_name('password').send_keys("1234")
+        self.driver.find_element_by_id("submit").click()
+
+        self.driver.find_element_by_id("id_sugerencias").click()
+        
+        self.driver.find_element_by_id('suggestingTitle').send_keys("Propuesta tests")
+        self.driver.find_element_by_id('suggestingDate').send_keys("")
+        self.driver.find_element_by_id('suggestingContent').send_keys("Propuesta para hacer una nueva votacion como parte de los test de navegacion")
+        self.driver.find_element_by_id('submitSugForm').click()
+        
+        self.assertEquals(self.driver.current_url,f'{self.live_server_url}/booth/sugerenciaformulario/')'''
+
+    def test_navigation_sugerencias_form_empty_content(self):
+
+        self.driver.get(f'{self.live_server_url}/booth/login/')
+        self.driver.find_element_by_name('username').send_keys("voter1")
+        self.driver.find_element_by_name('password').send_keys("1234")
+        self.driver.find_element_by_id("submit").click()
+
+        self.driver.find_element_by_id("id_sugerencias").click()
+        
+        self.driver.find_element_by_id('suggestingTitle').send_keys("Propuesta tests")
+        self.driver.find_element_by_id('suggestingDate').send_keys("01-01-2023")
+        self.driver.find_element_by_id('suggestingContent').send_keys("")
+        self.driver.find_element_by_id('submitSugForm').click()
+        
+        self.assertEquals(self.driver.current_url,f'{self.live_server_url}/booth/sugerenciaformulario/')
+
