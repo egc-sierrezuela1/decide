@@ -11,7 +11,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from base import mods
-from booth.forms import SugerenciaVotoForm, PreguntaForm, SugerenciaForm
+from booth.forms import SugerenciaForm
 from django.shortcuts import render
 from django.template import RequestContext
 

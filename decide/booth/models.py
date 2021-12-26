@@ -6,22 +6,6 @@ from django.utils import timezone
 # Create your models here.
 
 
-class Pregunta(models.Model):
-    nombre = models.CharField(max_length=50)
-
-    def __str__(self):
-	    return self.nombre
-
-
-
-class SugerenciaVoto(models.Model):
-    titulo = models.CharField(max_length=50, verbose_name="Título")
-    campos_preguntas = models.PositiveSmallIntegerField(default="2")
-    preguntas = models.ForeignKey(Pregunta, on_delete = models.CASCADE)
-
-    def __str__(self):
-	    return self.titulo
-
 #Modelo adquirido del proyecto EGC-GUADALENTIN
 class Sugerencia(models.Model):
     user_id = models.IntegerField()
