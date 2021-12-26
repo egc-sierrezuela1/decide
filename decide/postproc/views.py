@@ -16,6 +16,7 @@ class PostProcView(APIView):
         out.sort(key=lambda x: -x['postproc'])
         return out
 
+      
     def borda(self, options):
         out = []
 
@@ -41,7 +42,38 @@ class PostProcView(APIView):
         out.sort(key=lambda x: -x['postproc'])
         return out
 
+
+    def proportional_representation(self, options, type): #EGC-GUADALENTIN
+        out = []
+        votes = []
+        points_for_opt = []
+        multiplier = 1
+        points = options[0]['points']
+        zero_votes = True
+
+        for i in range(0, len(options)):
+            votes.append(options[i]['votes'])
+            points_for_opt.append(0)
+            if zero_votes is True and options[i]['votes'] != 0:
+                zero_votes = False
+
+        if zero_votes is False:
+            for i in range(0, points):
+                max_index = votes.index(max(votes))
+                points_for_opt[max_index] += 1
+                votes[max_index] = options[max_index]['votes'] / (multiplier * points_for_opt[max_index] + 1)
+
+        for i in range(0, len(options)):
+            out.append({
+                **options[i],
+                'postproc': points_for_opt[i],
+            })
+
+        out.sort(key=lambda x: (-x['postproc'], -x['votes']))
+        return out
+
     def post(self, request):
+
         """
          * type: IDENTITY | EQUALITY | WEIGHT
          * options: [
@@ -66,17 +98,10 @@ class PostProcView(APIView):
                 result = self.identity(opts)
             if t == 'BORDA':
                 result = self.borda(opts)
-            '''
             if t == 'EQUALITY':
                 result = self.equality(opts)
             if t == 'SAINTE_LAGUE' or t == 'HONDT':
                 result = self.proportional_representation(opts, t)
-            if t == 'DROOP':
-                result = self.droop(opts)
-            if t == 'IMPERIALI':
-                result = self.imperiali(opts)
-            if t == 'HARE':
-                result = self.hare(opts)'''
 
             out.append({'type': t, 'options': result})
 
