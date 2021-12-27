@@ -73,3 +73,42 @@ class Voters(HttpUser):
     host = HOST
     tasks = [DefVoters]
     wait_time= between(3,5)
+    
+
+
+#TEST DE CARGA PARA SUGERENCIA
+class DefSugerencia(SequentialTaskSet):
+
+    def on_start(self):
+        with open('voters.json') as f:
+            self.voters = json.loads(f.read())
+        self.voter = choice(list(self.voters.items()))
+
+    @task(1)
+    def login(self):
+        r = self.client.get('/booth/')
+        username, pwd = self.voter
+        self.token = self.client.post('/booth/login/', 
+        {"username": username, 'password': pwd,
+        'csrfmiddlewaretoken': r.cookies['csrftoken']})
+
+    @task(2)
+    def postFormularioSugerencia(self):
+        r = self.client.get("/booth/sugerenciaformulario/")
+
+        self.client.post("/booth/sugerenciaformulario/send/", {
+            "suggesting-title": "Ejemplo de sugerencia",
+            "suggesting-date": "2030-12-12",
+            "suggesting-content": "Esto es una prueba de locust para las sugerencias",
+            'csrfmiddlewaretoken': r.cookies['csrftoken']
+        })
+        #print( str(self.form2))
+
+    def on_quit(self):
+        self.voter = None
+
+
+class Sugerencias(HttpUser):
+    host = HOST
+    tasks = [DefSugerencia]
+    wait_time= between(3,5)
