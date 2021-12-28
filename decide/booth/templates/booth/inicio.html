@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+    <link type="text/css" rel="stylesheet" href="{% static "booth/style.css" %}" />
+{% endblock %}
+
+{% block content %}
+<div id="app-booth">
+<nav class="navbar navbar-light bg-info">
+    <a class="navbar-brand" href="#">
+      <img src="../../static/booth/images/decideD.png" width="40" height="30" class="d-inline-block align-top" alt="">
+      Decide
+    </a>
+    {% if usuario_valido == 1 %}
+    <b-navbar-nav class="me-auto" v-if="!signup">
+        <b-nav-item>
+            <a href="{% url "logout" %}">Logout</a>
+        </b-nav-item>
+    </b-navbar-nav>
+    {% endif %}
+</nav>
+<h1 class="display-2">Bienvenido, {{user}}</h1>
+<br>
+<br>
+<table class="table">
+
+    <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Formulario para sugerencias</th>
+          <th scope="col">Puede votar en estas votaciones:</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <th scope="row"></th>
+          <td><a id="id_sugerencias" href="sugerenciaformulario/">Formulario de sugerencia</a></td>
+          <td>
+            {% for censo in censos %}
+            <p>ID del voto: {{censo.voting_id}} <a href="{{censo.voting_id}}">Acceder a la cabina del voto</a></p>
+            {% endfor %} 
+        </td>
+        </tr>
+</table>
+
+<div class="rounded mx-auto d-block" >
+    <img src="../../static/booth/images/votaciones.png"
+  </div>
+{% endblock %}

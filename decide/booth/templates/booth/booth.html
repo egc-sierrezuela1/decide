@@ -10,44 +10,27 @@
 {% endblock %}
 
 {% block content %}
+    
+    {% if puede_votar %}
+
+
     <div id="app-booth">
         <!-- Navbar -->
-        <b-navbar type="dark" variant="secondary">
-            <b-navbar-brand tag="h1">Decide</b-navbar-brand>
-                <b-navbar-nav class="ml-auto" v-if="!signup">
-                    <b-nav-item href="#" v-on:click="decideLogout">
-                        {% trans "logout" %}
-                    </b-nav-item>
-                </b-navbar-nav>
-        </b-navbar>
+        <nav class="navbar navbar-light bg-info">
+            <a class="navbar-brand" href="#">
+              <img src="../../static/booth/images/decideD.png" width="40" height="30" class="d-inline-block align-top" alt="">
+              Decide
+            </a>
+          </nav>
 
+    
         <b-alert :variant="alertLvl" dismissible v-model="alertShow">
             [[ alertMsg ]]
         </b-alert>
-
+        <div class="voting-externa">
+           
         <div class="voting">
             <h1>[[ voting.id ]] - [[ voting.name ]]</h1>
-
-            <!-- Register -->
-            <b-form @submit="onSubmitLogin" v-if="signup">
-                <b-form-group label="{% trans "Username" %}" label-for="username">
-                    <b-form-input
-                        id="username"
-                        type="text"
-                        v-model="form.username"
-                        autocomplete="username"
-                        required />
-                </b-form-group>
-                <b-form-group label="{% trans "Password" %}" label-for="password">
-                    <b-form-input
-                        id="password"
-                        type="password"
-                        autocomplete="current-password"
-                        v-model="form.password"
-                        required />
-                </b-form-group>
-                <b-button type="submit" variant="primary">{% trans "Login" %}</b-button>
-            </b-form>
 
             <!-- Voting -->
             <div v-if="!signup">
@@ -60,12 +43,33 @@
                         [[ opt.option ]]
                     </b-form-radio>
                 </b-form-group>
-                <b-button type="button" variant="primary" v-on:click="decideSend">
+
+                <b-button id="voting_button" type="button" variant="primary" v-on:click="decideSend">
                     {% trans "Vote" %}
                 </b-button>
-            </div>
+                <b-button id="return_button" type="button" variant="primary" href="{% url "pagina-inicio" %}">Volver</b-button>
+
+                <br>
+                    <p class="card-text mt-2">
+                    Número de votos totales computados en esta votacion: {{ votos }}
+                    </p>
+            </div> 
         </div>
     </div>
+</div>
+
+    <div class="voting-images">
+        <img src="../../static/booth/images/votaciones.png"
+    </div>
+
+    
+    {% else %}
+        <h2>Error</h2>
+        <div>
+            <p>No tiene acceso a esta votacion <a href="{% url "pagina-inicio" %}">Volver</a></p>
+        </div>
+    {% endif %}
+
 {% endblock %}
 
 {% block extrabody %}
@@ -87,28 +91,28 @@
 
     <script>
         var voting = {{voting|safe}};
+        var user = {{voter|safe}};
+        var token = {{token|safe}};
         var app = new Vue({
             delimiters: ['[[', ']]'],
             el: '#app-booth',
             data: {
                 keybits: {{ KEYBITS }},
                 voting: voting,
-                selected: "",
-                signup: true,
+                selected: [],
                 alertShow: false,
                 alertMsg: "",
                 alertLvl: "info",
-                token: null,
-                user: null,
-                form: {
-                    username: '',
-                    password: ''
-                },
+                token: token,
+                user: user,
                 bigpk: {
                     p: BigInt.fromJSONObject(voting.pub_key.p.toString()),
                     g: BigInt.fromJSONObject(voting.pub_key.g.toString()),
                     y: BigInt.fromJSONObject(voting.pub_key.y.toString()),
-                }
+                },
+                voteSuccess: false,
+                csspd: false,
+                csstrit: false
             },
             beforeMount() {
                 this.init()

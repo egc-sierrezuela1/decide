@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet"
+         href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css" />
+    <link type="text/css" rel="stylesheet" href="{% static "booth/style.css" %}" />
+{% endblock %}
+
+{% block content %}
+<div id="app-booth">
+    <nav class="navbar navbar-light bg-info">
+        <a class="navbar-brand" href="#">
+          <img src="../../static/booth/images/decideD.png" width="40" height="30" class="d-inline-block align-top" alt="">
+          Decide
+        </a>
+        <b-navbar-nav class="me-auto" v-if="!signup">
+            <b-nav-item>
+                <a href="{% url "logout" %}">Logout</a>
+            </b-nav-item>
+        </b-navbar-nav>
+    </nav>
+
+<div>
+    <h2>Formulario sugerencia de voto</h2>
+</div>
+
+
+<form action="{% url 'suggesting-send' %}" method="POST" aria-describedby="formHelp">
+    <div id="formHelp" style="display: none">Formulario para enviar a los administradores del sistema una sugerencia de votación. Debes introducir un título para la votación, la fecha que propones y tus argumentos y razones para incluirla</div>
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="suggestingTitle">Título</label>
+            <input name="suggesting-title" type="text" class="form-control" id="suggestingTitle" required
+                {% if suggesting %} value="{{suggesting.title}}" readonly {% endif %}
+                {% if post_data %} value="{{post_data.title}}" {% endif %}>
+        </div>
+        {% if error %}
+            <p style="color: red;">
+                Por favor, seleccione una fecha posterior al día de hoy.
+            </p>
+        {% endif %}
+        <div class="form-group">
+            <label for="suggestingDate">Fecha propuesta</label>
+            <input name="suggesting-date" type="date" class="form-control" id="suggestingDate" required
+            {% if suggesting %} value="{{suggesting.suggesting_date|date:"Y-m-d"}}" readonly {% endif %}
+            {% if post_data %} value="{{post_data.suggesting_date}}" {% endif %}>
+            {% if not suggesting and not post_data %}<small class="form-text text-muted" v-bind:class="{dp: csspd, trit: csstrit}">Debe elegir una fecha futura</small>{% endif %}
+            {% if post_data %}
+            <p class="alert alert-danger sug" v-bind:class="{dp: csspd, trit: csstrit}">{{post_data.errors}}</p>
+            {% endif %}
+        </div> 
+        <div class="form-group">
+            <label for="suggestingContent">Argumentos y razones</label>
+            <textarea name="suggesting-content" class="form-control" id="suggestingContent" rows="6" required style="min-height:120px;"
+                placeholder="Por favor, argumente los motivos por los que considera necesaria la celebración de la votación que sugiere."
+                {% if suggesting %} readonly {% endif %}>{% if suggesting %}{{suggesting.content}}{% endif %}{% if post_data %}{{post_data.content}}{% endif %}</textarea>
+        </div>
+        {% if suggesting %}
+            <p v-bind:class="{dp: csspd, trit: csstrit}">{{suggesting_state}}</p>
+        {% else %}
+        <button id="submitSugForm" type="submit" class="btn btn-primary" v-bind:class="{dp: csspd, trit: csstrit}">Enviar</button>
+        {% endif %}
+    </form>
+
+</div>
+{% endblock %}
+
