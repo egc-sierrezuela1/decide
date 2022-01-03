@@ -72,7 +72,7 @@ MODULES = [
 
 BASEURL = 'http://localhost:8000/'
 
-#APIS = {}
+APIS = {}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
