@@ -35,6 +35,8 @@ jobs:
         pip install codacy-coverage
     - name: Run migrations
       run: cd decide;python manage.py migrate
+    - name: Cambiar a local_settings.py para las pruebas
+      run: cp decide/local_settings_local.py decide/local_settings.py
     - name: Run Postproc tests     
       run: cd decide;./manage.py test postproc
     - name: Run Booth tests     
