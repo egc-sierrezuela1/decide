@@ -11,7 +11,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from base import mods
-from booth.forms import SugerenciaVotoForm, PreguntaForm, SugerenciaForm
+from booth.forms import SugerenciaForm
 from django.shortcuts import render
 from django.template import RequestContext
 
@@ -156,18 +156,19 @@ def send_suggesting_form(request):
 
         s_date = datetime.datetime.strptime(str_s_date, '%Y-%m-%d').date()
 
-        if s_date > timezone.now().date():
+        if is_future_date(s_date):
             s = Sugerencia(user_id=user_id, title=title, suggesting_date=s_date, content=content, send_date=send_date)
             s.save()
             return HttpResponseRedirect(reverse('pagina-inicio'))
         else:
+            #no muestra el error en la vista
             request.session['title'] = title
             request.session['suggesting_date'] = str_s_date
             request.session['content'] = content
             request.session['errors'] = "La fecha seleccionada ya ha pasado. Debe seleccionar una posterior al día de hoy."
             return HttpResponseRedirect(reverse('formulario_suggest'))
     else:
-        return HttpResponseRedirect(reverse('booth/inicio.html'))
+        return HttpResponseRedirect(reverse('pagina-inicio'))
 
 def is_future_date(date):
     return date > timezone.now().date()
