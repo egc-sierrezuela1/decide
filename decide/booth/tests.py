@@ -121,8 +121,6 @@ class FormSugerenciaTest(TestCase):
  
     def test_send_suggesting_form_not_post_method(self):
         response = self.client.get('/booth/sugerenciaformulario/send/')
-        print("AQUIII")
-        print(response.status_code)
         self.assertEqual(response.status_code, 302)
 
 
