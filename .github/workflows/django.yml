@@ -36,7 +36,9 @@ jobs:
     - name: Run migrations
       run: cd decide;python manage.py migrate
     - name: Run Postproc tests     
-      run: cd decide;coverage run --branch --source=. ./manage.py test postproc --keepdb; coverage xml;
+      run: cd decide;./manage.py test postproc
+    - name: Run Postproc tests with coverage   
+      run: cd decide;coverage run --branch --source=. ./manage.py test postproc; coverage xml;
     - name: Codacy Coverage Reporter
       uses: codacy/codacy-coverage-reporter-action@v1.1.0
       with:
