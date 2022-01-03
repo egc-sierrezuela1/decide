@@ -37,6 +37,8 @@ jobs:
       run: cd decide;python manage.py migrate
     - name: Run Postproc tests     
       run: cd decide;./manage.py test postproc
+    - name: Run Booth tests     
+      run: cd decide;./manage.py test booth
     - name: Run Postproc tests with coverage   
       run: cd decide;coverage run --branch --source=. ./manage.py test postproc; coverage xml;
     - name: Codacy Coverage Reporter
