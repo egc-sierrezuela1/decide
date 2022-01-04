@@ -40,7 +40,7 @@ jobs:
     - name: Run Booth tests     
       run: cd decide;./manage.py test booth/tests.py
     - name: Run Postproc and Booth tests with coverage   
-      run: cd decide;coverage run --source . ./manage.py test postproc;coverage run --source . ./manage.py test booth/tests.py; coverage xml;
+      run: cd decide;coverage run ./manage.py test postproc;coverage run ./manage.py test booth/tests.py; coverage xml;
     - name: Codacy Coverage Reporter
       uses: codacy/codacy-coverage-reporter-action@v1.1.0
       with:
