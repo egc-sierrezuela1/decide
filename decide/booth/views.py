@@ -1,5 +1,5 @@
 import json
-import datetime
+from datetime import datetime
 from django.http.response import HttpResponseRedirect
 from django.views.generic import TemplateView, FormView
 from django.conf import settings
@@ -73,20 +73,35 @@ def check_user_has_voted(context, voting_id, voter_id):
 
 def logout_view(request):
     logout(request)
-    print("LOG OUT")
     print(request.user)
     return HttpResponseRedirect(reverse('pagina-inicio'))
 
 @login_required(login_url="/booth/login")
-def get_pagina_inicio(request):#/booth
+def get_pagina_inicio(request):
+    res = []
+    sol = []
     template = 'booth/inicio.html'
     user_actual = request.user
-    #request.user = user_actual#para guardar en el request el usuario que se ha autenticado :)
     usuario_valido = User.objects.all().filter(id=user_actual.id).count()
     num_censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id).count()
     censos_votante_actual = Census.objects.all().filter(voter_id=user_actual.id)
+    for censo in censos_votante_actual:
+        voto_valido = Voting.objects.all().filter(id=censo.voting_id)
+        if voto_valido[0].end_date != None:
+            if voto_valido[0].end_date.strftime('%Y-%m-%d %H:%M') < datetime.today().strftime('%Y-%m-%d %H:%M'):
+                res.append(True)
+                sol.append(censo.voting_id)
+        else:
+            res.append(False)
+            sol.append(censo.voting_id )
+    x = list(zip(res,sol))
+    u = []
+    for t,y in x:
+        if t == False:
+            u.append(y)
+    sol = u
     return render(request, template, {"censos": censos_votante_actual, "num_censos":num_censos_votante_actual,
-            "user":user_actual, "usuario_valido": usuario_valido})
+            "user":user_actual, "usuario_valido": usuario_valido,"res":res,"sol":sol})
 
         
 # TODO: check permissions and census
