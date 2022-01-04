@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{github.ref == 'refs/heads/deployGitHubActions' }} 
     steps:
-    - run: echo "🔎 The name of your branch is ${{ github.ref }}
+    - run: echo "🔎 The name of your branch is ${{ github.ref }}."
     - uses: actions/checkout@v1
     - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
       with:
