@@ -40,8 +40,8 @@
           <th scope="row"></th>
           <td><a id="id_sugerencias" href="sugerenciaformulario/">Formulario de sugerencia</a></td>
           <td>
-            {% for censo in censos %}
-            <p>ID del voto: {{censo.voting_id}} <a href="{{censo.voting_id}}">Acceder a la cabina del voto</a></p>
+            {% for s in sol %}
+            <p>ID del voto: {{s}} <a href="{{s}}">Acceder a la cabina del voto</a></p>
             {% endfor %} 
         </td>
         </tr>

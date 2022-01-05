@@ -70,7 +70,7 @@ MODULES = [
     'voting',
 ]
 
-BASEURL = 'http://localhost:8000/'
+BASEURL = 'https://egc-sierrezuela1.herokuapp.com/'
 
 APIS = {}
 
