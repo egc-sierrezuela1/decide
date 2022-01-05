@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+import datetime
 from django.http.response import HttpResponseRedirect
 from django.views.generic import TemplateView, FormView
 from django.conf import settings
@@ -88,7 +88,7 @@ def get_pagina_inicio(request):
     for censo in censos_votante_actual:
         voto_valido = Voting.objects.all().filter(id=censo.voting_id)
         if voto_valido[0].end_date != None:
-            if voto_valido[0].end_date.strftime('%Y-%m-%d %H:%M') < datetime.today().strftime('%Y-%m-%d %H:%M'):
+            if voto_valido[0].end_date.strftime('%Y-%m-%d %H:%M') < datetime.datetime.today().strftime('%Y-%m-%d %H:%M'):
                 res.append(True)
                 sol.append(censo.voting_id)
         else:
@@ -169,7 +169,7 @@ def send_suggesting_form(request):
         content = request.POST['suggesting-content']
         send_date = timezone.now().date()
 
-        s_date = datetime.strptime(str_s_date, '%Y-%m-%d').date()
+        s_date = datetime.datetime.strptime(str_s_date, '%Y-%m-%d').date()
 
         if is_future_date(s_date):
             s = Sugerencia(user_id=user_id, title=title, suggesting_date=s_date, content=content, send_date=send_date)
