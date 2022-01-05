@@ -169,7 +169,7 @@ def send_suggesting_form(request):
         content = request.POST['suggesting-content']
         send_date = timezone.now().date()
 
-        s_date = datetime.datetime.strptime(str_s_date, '%Y-%m-%d').date()
+        s_date = datetime.strptime(str_s_date, '%Y-%m-%d').date()
 
         if is_future_date(s_date):
             s = Sugerencia(user_id=user_id, title=title, suggesting_date=s_date, content=content, send_date=send_date)
