@@ -67,7 +67,7 @@ MODULES = [
     'voting',
 ]
 
-BASEURL = 'https://egc-sierrezuela1.herokuapp.com/'
+BASEURL = 'https://egc-sierrezuela1.herokuapp.com'
 
 APIS = {}
 
